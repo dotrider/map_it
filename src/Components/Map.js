@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
-import { Map, GoogleApiWrapper, Marker } from 'google-maps-react';
+import { Map, GoogleApiWrapper, Marker, InfoWindow} from 'google-maps-react';
 import axios from 'axios';
 
 
 
 const MapContainer = (props) => {
-    const [breweries, setBreweries] = useState([])
+    const [breweries, setBreweries] = useState([]),
+          [selectedBrewery, setSelectedBrewery] = useState(null);
+
     console.log('state', breweries)
 
     console.log('props', props)
@@ -25,15 +27,21 @@ const displayMarkers = () => {
     return <Marker key={brewery.id} position={{
       lat: brewery.latitude,
       lng: brewery.longitude
-    }}/>
+    }}
+    onClick={() => {
+      setSelectedBrewery(brewery)
+    }}
+    />
   })
+  
 }
 
     const mapStyles = {
-        width: '50%',
-        height: '50%',
+        width: '100%',
+        height: '100%',
       };
 
+    
 
     return(
         <div>
@@ -43,8 +51,26 @@ const displayMarkers = () => {
           style={mapStyles}
           initialCenter={{ lat: 33.448513, lng: -112.074012}}
         >
+          
           {displayMarkers()}
-            {/* <Marker position={{ lat: 33.448513, lng: -112.074012}} /> */}
+            {selectedBrewery && (
+            <InfoWindow
+            position={{
+            lat: selectedBrewery.brewery.latitude,
+            lng: selectedBrewery.brewery.gitlongitude
+          }}
+
+          onCloseClick={() => {
+            setSelectedBrewery(null)
+          }}
+          >
+            <div>
+              {selectedBrewery.name}
+              {selectedBrewery.city}
+            </div>
+          </InfoWindow>
+          )}
+
             </Map>
 
 
